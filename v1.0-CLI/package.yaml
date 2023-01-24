@@ -47,6 +47,7 @@ executables:
     dependencies:
     - voting-machine
     - unordered-containers
+    - containers
 
 tests:
   voting-machine-test:
