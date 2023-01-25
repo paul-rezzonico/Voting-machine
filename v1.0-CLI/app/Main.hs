@@ -1,45 +1,47 @@
 import Control.Monad (forever)
-import Data.Map(Map, empty, insert, lookup, toList, adjust)
+import Data.Map(Map, empty, insert, lookup, toList)
 import Data.IORef(newIORef, readIORef, writeIORef)
+import Data.HashSet (fromList, member, insert)
 
 --Définition de notre type de map :
 type MapCandidat = Map String Int
-type MapVoteur = Map String Int
 
 main :: IO()
 main = do
 
   let mapCandidat = empty :: MapCandidat
-  let mapCandidat' = insert "Nixos" 0 $ insert "Windows" 0 $ insert "Linux" 0 mapCandidat
+  let mapCandidat' = Data.Map.insert "Nixos" 0 $ Data.Map.insert "Windows" 0 $ Data.Map.insert "Linux" 0 mapCandidat
   mapCandidatRef <- newIORef mapCandidat'
 
-  let mapVoteur = empty :: MapVoteur
+  let mapVoteur = Data.HashSet.fromList[]
   mapVoteurRef <- newIORef mapVoteur
-  
-  forever $ do 
+  forever $ do
     putStrLn "Entrer une commande :"
     command  <- getLine
+    candidats <- readIORef mapCandidatRef
+    voteurs <- readIORef mapVoteurRef
 
-    case words command of 
+    case words command of
       ["voter", voteur, candidat] -> do
-        candidats <- readIORef mapCandidatRef
 
-        case Data.Map.lookup candidat candidats of 
+        case Data.Map.lookup candidat candidats of
           Just nbVotes -> do
-            
-            let map <-
-            putStrLn $ "A voter !, " ++ candidat ++ " est maintenant à " ++ show nbVotes ++ "voix !"
+            if Data.HashSet.member voteur voteurs then
+              putStrLn $ "vous avez deja voté, " ++ voteur ++ " !"
+            else do
+              writeIORef mapVoteurRef (Data.HashSet.insert voteur voteurs)
+              let votes = nbVotes +1
+              writeIORef mapCandidatRef (Data.Map.insert candidat votes candidats)
+              putStrLn $ "A voter !, " ++ candidat ++ " est maintenant à " ++ show votes ++ " voix !"
 
           Nothing -> putStrLn "Candidat introuvable !"
-      
+
       ["voir", candidat] -> do
-        candidats <- readIORef mapCandidatRef
-        case Data.Map.lookup candidat candidats of 
+        case Data.Map.lookup candidat candidats of
           Just nbVotes -> putStrLn $ "Le nombre de votes pour " ++ candidat ++ " est : " ++ show nbVotes
           Nothing -> putStrLn $ "candidat : " ++ candidat ++ " non-trouvé"
-      
+
       ["voir"] -> do
-        candidats <- readIORef mapCandidatRef
         putStrLn "Scores de chaque candidat :"
         mapM_ (\(candidat, nbVotes) -> putStrLn $ candidat ++ " : " ++ show nbVotes ++ " voix.") $ toList candidats
 

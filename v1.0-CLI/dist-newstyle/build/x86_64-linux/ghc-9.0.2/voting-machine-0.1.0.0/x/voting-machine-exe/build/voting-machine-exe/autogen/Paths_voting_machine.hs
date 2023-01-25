@@ -42,12 +42,12 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
-bindir     = "/root/.cabal/bin"
-libdir     = "/root/.cabal/lib/x86_64-linux-ghc-9.0.2/voting-machine-0.1.0.0-inplace-voting-machine-exe"
-dynlibdir  = "/root/.cabal/lib/x86_64-linux-ghc-9.0.2"
-datadir    = "/root/.cabal/share/x86_64-linux-ghc-9.0.2/voting-machine-0.1.0.0"
-libexecdir = "/root/.cabal/libexec/x86_64-linux-ghc-9.0.2/voting-machine-0.1.0.0"
-sysconfdir = "/root/.cabal/etc"
+bindir     = "/home/iut/.cabal/bin"
+libdir     = "/home/iut/.cabal/lib/x86_64-linux-ghc-9.0.2/voting-machine-0.1.0.0-inplace-voting-machine-exe"
+dynlibdir  = "/home/iut/.cabal/lib/x86_64-linux-ghc-9.0.2"
+datadir    = "/home/iut/.cabal/share/x86_64-linux-ghc-9.0.2/voting-machine-0.1.0.0"
+libexecdir = "/home/iut/.cabal/libexec/x86_64-linux-ghc-9.0.2/voting-machine-0.1.0.0"
+sysconfdir = "/home/iut/.cabal/etc"
 
 getBinDir     = catchIO (getEnv "voting_machine_bindir")     (\_ -> return bindir)
 getLibDir     = catchIO (getEnv "voting_machine_libdir")     (\_ -> return libdir)
