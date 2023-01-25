@@ -1,38 +1,47 @@
-import Data.Map (Map, empty, insert, lookup, toList)
-import Text.Printf (printf)
+import Control.Monad (forever)
+import Data.Map(Map, empty, insert, lookup, toList, adjust)
+import Data.IORef(newIORef, readIORef, writeIORef)
 
-type Candidat = String
-type Voter = String
-type Votes = Map Candidat Int
+--Définition de notre type de map :
+type MapCandidat = Map String Int
+type MapVoteur = Map String Int
 
-main :: IO ()
+main :: IO()
 main = do
-  votes <- processCommand empty
-  putStrLn "Au revoir!"
 
-processCommand :: Votes -> IO Votes
-processCommand votes = do
-  putStrLn "Entrez une commande :"
-  command <- getLine
-  case words command of
-    ["voter", voter, candidat] -> do
-      case Data.Map.lookup voter votes of
-        Just _ -> putStrLn $ voter ++ " a déjà voté."
-        Nothing -> case Data.Map.lookup candidat votes of
-          Just _ -> do
-            putStrLn $ "Merci pour votre vote, " ++ voter ++ "."
-            putStrLn ( voter ++ candidat ++ show(votes))
-          Nothing -> putStrLn $ "Candidat " ++ candidat ++ " inconnu."
-      processCommand votes
-    ["voir", candidat] -> do
-      case Data.Map.lookup candidat votes of
-        Just count -> putStrLn $ candidat ++ " : " ++ show count ++ " voix."
-        Nothing -> putStrLn $ "Candidat " ++ candidat ++ " inconnu."
-      processCommand votes
-    ["voir"] -> do
-      putStrLn "Scores :"
-      mapM_ (\(candidat, count) -> putStrLn $ candidat ++ " : " ++ show count ++ " voix.") $ toList votes
-      processCommand votes
-    _ -> do
-      putStrLn "Commande inconnue."
-      processCommand votes
+  let mapCandidat = empty :: MapCandidat
+  let mapCandidat' = insert "Nixos" 0 $ insert "Windows" 0 $ insert "Linux" 0 mapCandidat
+  mapCandidatRef <- newIORef mapCandidat'
+
+  let mapVoteur = empty :: MapVoteur
+  mapVoteurRef <- newIORef mapVoteur
+  
+  forever $ do 
+    putStrLn "Entrer une commande :"
+    command  <- getLine
+
+    case words command of 
+      ["voter", voteur, candidat] -> do
+        candidats <- readIORef mapCandidatRef
+
+        case Data.Map.lookup candidat candidats of 
+          Just nbVotes -> do
+            
+            let map <-
+            putStrLn $ "A voter !, " ++ candidat ++ " est maintenant à " ++ show nbVotes ++ "voix !"
+
+          Nothing -> putStrLn "Candidat introuvable !"
+      
+      ["voir", candidat] -> do
+        candidats <- readIORef mapCandidatRef
+        case Data.Map.lookup candidat candidats of 
+          Just nbVotes -> putStrLn $ "Le nombre de votes pour " ++ candidat ++ " est : " ++ show nbVotes
+          Nothing -> putStrLn $ "candidat : " ++ candidat ++ " non-trouvé"
+      
+      ["voir"] -> do
+        candidats <- readIORef mapCandidatRef
+        putStrLn "Scores de chaque candidat :"
+        mapM_ (\(candidat, nbVotes) -> putStrLn $ candidat ++ " : " ++ show nbVotes ++ " voix.") $ toList candidats
+
+      _ -> do
+        putStrLn "Commande inconnue."
