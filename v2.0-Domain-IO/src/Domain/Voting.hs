@@ -39,3 +39,14 @@ data BallotPaper = BallotPaper    -- bulletin de vote
 
 data VoteOutcome = VoteAccepted VotingMachine | HasAlreadyVoted | UnknownCandidate
   deriving (Eq, Show, Generic)
+
+emptyVotingMachine :: [Candidate] -> VotingMachine
+emptyVotingMachine = case candidate of
+  Just -> 
+  Nothing -> 
+
+vote :: BallotPaper -> VotingMachine -> VoteOutcome
+vote =
+
+getSingleScore :: Candidate -> VotingMachine -> Maybe Score
+getSingleScore =
