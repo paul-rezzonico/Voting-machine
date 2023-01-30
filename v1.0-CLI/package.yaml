@@ -48,6 +48,7 @@ executables:
     - voting-machine
     - unordered-containers
     - containers
+    - optparse-applicative
 
 tests:
   voting-machine-test:

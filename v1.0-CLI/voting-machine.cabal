@@ -45,6 +45,7 @@ executable voting-machine-exe
   build-depends:
       base >=4.7 && <5
     , containers
+    , optparse-applicative
     , unordered-containers
     , voting-machine
   default-language: Haskell2010

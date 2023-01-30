@@ -1,40 +1,49 @@
 import Control.Monad (forever)
-import Data.Map(Map, empty, insert, lookup, toList)
+import Data.Map(Map, insert, lookup, toList, fromList)
 import Data.IORef(newIORef, readIORef, writeIORef)
 import Data.HashSet (fromList, member, insert)
+import Options.Applicative
 
---Définition de notre type de map :
-type MapCandidat = Map String Int
+data Options = Options{
+  listeCandidatsOptn :: String
+}
+
+options :: Parser Options
+options = Options <$> strOption (long "listCandidats" <> short 'l')
+
+createHashMap :: [String] -> Map String Int
+createHashMap list = Data.Map.fromList [(x,0) | x<- list]
 
 main :: IO()
 main = do
 
-  let mapCandidat = empty :: MapCandidat
-  let mapCandidat' = Data.Map.insert "Nixos" 0 $ Data.Map.insert "Windows" 0 $ Data.Map.insert "Linux" 0 mapCandidat
-  mapCandidatRef <- newIORef mapCandidat'
+  lc  <- execParser $ info options mempty
+
+  let mapCandidat = createHashMap $ words $ listeCandidatsOptn lc
+  mapCandidatRef <- newIORef mapCandidat
 
   let mapVoteur = Data.HashSet.fromList[]
   mapVoteurRef <- newIORef mapVoteur
   forever $ do
     putStrLn "Entrer une commande :"
-    command  <- getLine
+    commands  <- getLine
     candidats <- readIORef mapCandidatRef
     voteurs <- readIORef mapVoteurRef
 
-    case words command of
+    case words commands of
       ["voter", voteur, candidat] -> do
 
-        case Data.Map.lookup candidat candidats of
-          Just nbVotes -> do
-            if Data.HashSet.member voteur voteurs then
+        if Data.HashSet.member voteur voteurs then
               putStrLn $ "vous avez deja voté, " ++ voteur ++ " !"
-            else do
-              writeIORef mapVoteurRef (Data.HashSet.insert voteur voteurs)
+        else do
+          writeIORef mapVoteurRef (Data.HashSet.insert voteur voteurs)
+          case Data.Map.lookup candidat candidats of
+            Just nbVotes -> do
               let votes = nbVotes +1
               writeIORef mapCandidatRef (Data.Map.insert candidat votes candidats)
               putStrLn $ "A voter !, " ++ candidat ++ " est maintenant à " ++ show votes ++ " voix !"
 
-          Nothing -> putStrLn "Candidat introuvable !"
+            Nothing -> putStrLn "Candidat introuvable !"
 
       ["voir", candidat] -> do
         case Data.Map.lookup candidat candidats of

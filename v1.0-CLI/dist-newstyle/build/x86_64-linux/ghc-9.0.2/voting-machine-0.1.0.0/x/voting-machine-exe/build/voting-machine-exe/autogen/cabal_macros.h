@@ -30,6 +30,16 @@
   (major1) == 0 && (major2) <  6 || \
   (major1) == 0 && (major2) == 6 && (minor) <= 4)
 #endif /* MIN_VERSION_containers */
+/* package optparse-applicative-0.17.0.0 */
+#ifndef VERSION_optparse_applicative
+#define VERSION_optparse_applicative "0.17.0.0"
+#endif /* VERSION_optparse_applicative */
+#ifndef MIN_VERSION_optparse_applicative
+#define MIN_VERSION_optparse_applicative(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  17 || \
+  (major1) == 0 && (major2) == 17 && (minor) <= 0)
+#endif /* MIN_VERSION_optparse_applicative */
 /* package unordered-containers-0.2.17.0 */
 #ifndef VERSION_unordered_containers
 #define VERSION_unordered_containers "0.2.17.0"
