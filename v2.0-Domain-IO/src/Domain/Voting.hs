@@ -41,9 +41,8 @@ data VoteOutcome = VoteAccepted VotingMachine | HasAlreadyVoted | UnknownCandida
   deriving (Eq, Show, Generic)
 
 emptyVotingMachine :: [Candidate] -> VotingMachine
-emptyVotingMachine = case candidate of
-  Just -> 
-  Nothing -> 
+emptyVotingMachine candidates = VotingMachine {voters = HashSet.empty, scores = 
+  HashMap.fromList (zip candidates (repeat (Score 0)))}
 
 vote :: BallotPaper -> VotingMachine -> VoteOutcome
 vote =
